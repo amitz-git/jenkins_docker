@@ -1,11 +1,11 @@
-#!/bin/bash
+# Use the latest Nginx image
+FROM nginx:latest
 
-# Pull the latest Nginx image
-docker pull nginx:latest
+# Copy custom configuration if needed
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Run the Nginx container
-docker run -d --name nginx-server -p 80:80 nginx:latest
+# Expose the default Nginx port
+EXPOSE 80
 
-# Optional: Cleanup logic
-docker stop nginx-server || true
-docker rm nginx-server || true
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
