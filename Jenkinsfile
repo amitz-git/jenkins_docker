@@ -4,8 +4,8 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = 'my-app:latest'
-        CONTAINER_NAME = 'my-app-container'
+        IMAGE_NAME = 'nginx:latest'
+        CONTAINER_NAME = 'nginx-container'
     }
 
     stages {
