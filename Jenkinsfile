@@ -1,50 +1,40 @@
 pipeline {
-    agent {
-        label 'docker' // Ensures this runs only on the designated Docker node
-    }
+    agent any  // Runs on any available Jenkins node
 
     environment {
-        IMAGE_NAME = 'nginx:latest'
-        CONTAINER_NAME = 'nginx-container'
+        IMAGE_NAME = 'my-app'  // Name of the Docker image
+        IMAGE_TAG = 'latest'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                checkout scm
+                git 'https://github.com/amitz-git/jenkins_docker.git'  // Clone your repo
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t $IMAGE_NAME ."
+                    sh "docker build -t $IMAGE_NAME:$IMAGE_TAG ."
                 }
             }
         }
 
-        stage('Run Container') {
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    sh "docker run -d --name $CONTAINER_NAME $IMAGE_NAME"
+                    sh "echo ${env.DOCKER_PASSWORD} | docker login --username ${env.DOCKER_USER} --password-stdin"
+                    sh "docker tag $IMAGE_NAME:$IMAGE_TAG ${env.DOCKER_USER}/$IMAGE_NAME:$IMAGE_TAG"
+                    sh "docker push ${env.DOCKER_USER}/$IMAGE_NAME:$IMAGE_TAG"
                 }
             }
         }
 
-        stage('Test Application') {
+        stage('Deploy') {
             steps {
                 script {
-                    sh "docker exec $CONTAINER_NAME ./run-tests.sh"
-                }
-            }
-        }
-
-        stage('Cleanup') {
-            steps {
-                script {
-                    sh "docker stop $CONTAINER_NAME || true"
-                    sh "docker rm $CONTAINER_NAME || true"
-                    sh "docker rmi $IMAGE_NAME || true"
+                    sh "docker run -d -p 8080:80 --name my-app-container $IMAGE_NAME:$IMAGE_TAG"
                 }
             }
         }
