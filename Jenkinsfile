@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // Runs on any available Jenkins node
+    agent { lebel 'docker' }  // Runs on any available Jenkins node
 
     environment {
         IMAGE_NAME = 'my-app'  // Name of the Docker image
