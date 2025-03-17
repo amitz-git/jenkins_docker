@@ -1,5 +1,5 @@
 pipeline {
-    agent { docker label 'docker' }
+    agent { label 'docker' }
     stages {
         stage('Pull Nginx Image') {
             steps {
