@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker { image 'jenkins/jenkins:lts' }
-    }
+    agent { docker label 'docker' }
     stages {
         stage('Pull Nginx Image') {
             steps {
